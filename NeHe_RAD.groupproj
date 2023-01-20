@@ -1,0 +1,600 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{9E640DC0-20BE-4677-ACB6-5CC2C0720F7B}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Lesson1\L1c_OpenGLWindow.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson2\L2c_FirstPolygon.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson3\L3c_ColorTriangle.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson4\L4c_Rotation.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson5\L5c_SolidObjects.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson6\L6c_TextureMapping.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson7\L7c_TextureFilters.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson8\L8c_Blending.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson9\L9c_MoveBitmaps.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson10\L10c_3DWorld.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson11\L11c_FlagEffect.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson12\L12c_DisplayLists.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson13\L13c_BitmapFonts.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson14\L14c_OutlineFonts.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson15\L15c_TexturedFonts.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson16\L16c_CoolFog.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson17\L17c_Tex2DFont.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson18\L18c_Quadrics.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson19\L19c_ParticleEngine.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson20\L20c_Masking.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson21\L21c_LineGame.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson22\L22c_BumpMapping.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson23\L23c_SphereMapping.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson24\L24c_ScissorTGA.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson25\L25c_Morphing.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson26\L26c_Clipping.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson27\L27c_Shadows.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson28\L28c_Bezier.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson29\L29c_Blitter.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson30\L30c_Collision.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson31\L31c_Milkshape.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson32\L32c_Picking.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson33\L33c_MultiTGA.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson34\L34c_HeightMap.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson35\L35c_PlayingAVI.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson36\L36c_RadialBlur.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson37\L37c_CelShading.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson38\L38c_LoadingTexRC.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson39\L39c_PhysicSim.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson40\L40c_RopePhysics.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson41\L41c_VolumeFog.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson42\L42c_MazeViewports.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson43\L43c_FreeFonts.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson44\L44c_LenseFlare.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson45\L45c_VertexBuffer.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson46\L46c_MultiSample.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson47\L47c_VertexShaderCG.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lesson48\L48c_ArcBallRotation.cbproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="L1c_OpenGLWindow">
+        <MSBuild Projects="Lesson1\L1c_OpenGLWindow.cbproj"/>
+    </Target>
+    <Target Name="L1c_OpenGLWindow:Clean">
+        <MSBuild Projects="Lesson1\L1c_OpenGLWindow.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L1c_OpenGLWindow:Make">
+        <MSBuild Projects="Lesson1\L1c_OpenGLWindow.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L2c_FirstPolygon">
+        <MSBuild Projects="Lesson2\L2c_FirstPolygon.cbproj"/>
+    </Target>
+    <Target Name="L2c_FirstPolygon:Clean">
+        <MSBuild Projects="Lesson2\L2c_FirstPolygon.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L2c_FirstPolygon:Make">
+        <MSBuild Projects="Lesson2\L2c_FirstPolygon.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L3c_ColorTriangle">
+        <MSBuild Projects="Lesson3\L3c_ColorTriangle.cbproj"/>
+    </Target>
+    <Target Name="L3c_ColorTriangle:Clean">
+        <MSBuild Projects="Lesson3\L3c_ColorTriangle.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L3c_ColorTriangle:Make">
+        <MSBuild Projects="Lesson3\L3c_ColorTriangle.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L4c_Rotation">
+        <MSBuild Projects="Lesson4\L4c_Rotation.cbproj"/>
+    </Target>
+    <Target Name="L4c_Rotation:Clean">
+        <MSBuild Projects="Lesson4\L4c_Rotation.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L4c_Rotation:Make">
+        <MSBuild Projects="Lesson4\L4c_Rotation.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L5c_SolidObjects">
+        <MSBuild Projects="Lesson5\L5c_SolidObjects.cbproj"/>
+    </Target>
+    <Target Name="L5c_SolidObjects:Clean">
+        <MSBuild Projects="Lesson5\L5c_SolidObjects.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L5c_SolidObjects:Make">
+        <MSBuild Projects="Lesson5\L5c_SolidObjects.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L6c_TextureMapping">
+        <MSBuild Projects="Lesson6\L6c_TextureMapping.cbproj"/>
+    </Target>
+    <Target Name="L6c_TextureMapping:Clean">
+        <MSBuild Projects="Lesson6\L6c_TextureMapping.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L6c_TextureMapping:Make">
+        <MSBuild Projects="Lesson6\L6c_TextureMapping.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L7c_TextureFilters">
+        <MSBuild Projects="Lesson7\L7c_TextureFilters.cbproj"/>
+    </Target>
+    <Target Name="L7c_TextureFilters:Clean">
+        <MSBuild Projects="Lesson7\L7c_TextureFilters.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L7c_TextureFilters:Make">
+        <MSBuild Projects="Lesson7\L7c_TextureFilters.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L8c_Blending">
+        <MSBuild Projects="Lesson8\L8c_Blending.cbproj"/>
+    </Target>
+    <Target Name="L8c_Blending:Clean">
+        <MSBuild Projects="Lesson8\L8c_Blending.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L8c_Blending:Make">
+        <MSBuild Projects="Lesson8\L8c_Blending.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L9c_MoveBitmaps">
+        <MSBuild Projects="Lesson9\L9c_MoveBitmaps.cbproj"/>
+    </Target>
+    <Target Name="L9c_MoveBitmaps:Clean">
+        <MSBuild Projects="Lesson9\L9c_MoveBitmaps.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L9c_MoveBitmaps:Make">
+        <MSBuild Projects="Lesson9\L9c_MoveBitmaps.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L10c_3DWorld">
+        <MSBuild Projects="Lesson10\L10c_3DWorld.cbproj"/>
+    </Target>
+    <Target Name="L10c_3DWorld:Clean">
+        <MSBuild Projects="Lesson10\L10c_3DWorld.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L10c_3DWorld:Make">
+        <MSBuild Projects="Lesson10\L10c_3DWorld.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L11c_FlagEffect">
+        <MSBuild Projects="Lesson11\L11c_FlagEffect.cbproj"/>
+    </Target>
+    <Target Name="L11c_FlagEffect:Clean">
+        <MSBuild Projects="Lesson11\L11c_FlagEffect.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L11c_FlagEffect:Make">
+        <MSBuild Projects="Lesson11\L11c_FlagEffect.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L12c_DisplayLists">
+        <MSBuild Projects="Lesson12\L12c_DisplayLists.cbproj"/>
+    </Target>
+    <Target Name="L12c_DisplayLists:Clean">
+        <MSBuild Projects="Lesson12\L12c_DisplayLists.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L12c_DisplayLists:Make">
+        <MSBuild Projects="Lesson12\L12c_DisplayLists.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L13c_BitmapFonts">
+        <MSBuild Projects="Lesson13\L13c_BitmapFonts.cbproj"/>
+    </Target>
+    <Target Name="L13c_BitmapFonts:Clean">
+        <MSBuild Projects="Lesson13\L13c_BitmapFonts.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L13c_BitmapFonts:Make">
+        <MSBuild Projects="Lesson13\L13c_BitmapFonts.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L14c_OutlineFonts">
+        <MSBuild Projects="Lesson14\L14c_OutlineFonts.cbproj"/>
+    </Target>
+    <Target Name="L14c_OutlineFonts:Clean">
+        <MSBuild Projects="Lesson14\L14c_OutlineFonts.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L14c_OutlineFonts:Make">
+        <MSBuild Projects="Lesson14\L14c_OutlineFonts.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L15c_TexturedFonts">
+        <MSBuild Projects="Lesson15\L15c_TexturedFonts.cbproj"/>
+    </Target>
+    <Target Name="L15c_TexturedFonts:Clean">
+        <MSBuild Projects="Lesson15\L15c_TexturedFonts.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L15c_TexturedFonts:Make">
+        <MSBuild Projects="Lesson15\L15c_TexturedFonts.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L16c_CoolFog">
+        <MSBuild Projects="Lesson16\L16c_CoolFog.cbproj"/>
+    </Target>
+    <Target Name="L16c_CoolFog:Clean">
+        <MSBuild Projects="Lesson16\L16c_CoolFog.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L16c_CoolFog:Make">
+        <MSBuild Projects="Lesson16\L16c_CoolFog.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L17c_Tex2DFont">
+        <MSBuild Projects="Lesson17\L17c_Tex2DFont.cbproj"/>
+    </Target>
+    <Target Name="L17c_Tex2DFont:Clean">
+        <MSBuild Projects="Lesson17\L17c_Tex2DFont.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L17c_Tex2DFont:Make">
+        <MSBuild Projects="Lesson17\L17c_Tex2DFont.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L18c_Quadrics">
+        <MSBuild Projects="Lesson18\L18c_Quadrics.cbproj"/>
+    </Target>
+    <Target Name="L18c_Quadrics:Clean">
+        <MSBuild Projects="Lesson18\L18c_Quadrics.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L18c_Quadrics:Make">
+        <MSBuild Projects="Lesson18\L18c_Quadrics.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L19c_ParticleEngine">
+        <MSBuild Projects="Lesson19\L19c_ParticleEngine.cbproj"/>
+    </Target>
+    <Target Name="L19c_ParticleEngine:Clean">
+        <MSBuild Projects="Lesson19\L19c_ParticleEngine.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L19c_ParticleEngine:Make">
+        <MSBuild Projects="Lesson19\L19c_ParticleEngine.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L20c_Masking">
+        <MSBuild Projects="Lesson20\L20c_Masking.cbproj"/>
+    </Target>
+    <Target Name="L20c_Masking:Clean">
+        <MSBuild Projects="Lesson20\L20c_Masking.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L20c_Masking:Make">
+        <MSBuild Projects="Lesson20\L20c_Masking.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L21c_LineGame">
+        <MSBuild Projects="Lesson21\L21c_LineGame.cbproj"/>
+    </Target>
+    <Target Name="L21c_LineGame:Clean">
+        <MSBuild Projects="Lesson21\L21c_LineGame.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L21c_LineGame:Make">
+        <MSBuild Projects="Lesson21\L21c_LineGame.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L22c_BumpMapping">
+        <MSBuild Projects="Lesson22\L22c_BumpMapping.cbproj"/>
+    </Target>
+    <Target Name="L22c_BumpMapping:Clean">
+        <MSBuild Projects="Lesson22\L22c_BumpMapping.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L22c_BumpMapping:Make">
+        <MSBuild Projects="Lesson22\L22c_BumpMapping.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L23c_SphereMapping">
+        <MSBuild Projects="Lesson23\L23c_SphereMapping.cbproj"/>
+    </Target>
+    <Target Name="L23c_SphereMapping:Clean">
+        <MSBuild Projects="Lesson23\L23c_SphereMapping.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L23c_SphereMapping:Make">
+        <MSBuild Projects="Lesson23\L23c_SphereMapping.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L24c_ScissorTGA">
+        <MSBuild Projects="Lesson24\L24c_ScissorTGA.cbproj"/>
+    </Target>
+    <Target Name="L24c_ScissorTGA:Clean">
+        <MSBuild Projects="Lesson24\L24c_ScissorTGA.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L24c_ScissorTGA:Make">
+        <MSBuild Projects="Lesson24\L24c_ScissorTGA.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L25c_Morphing">
+        <MSBuild Projects="Lesson25\L25c_Morphing.cbproj"/>
+    </Target>
+    <Target Name="L25c_Morphing:Clean">
+        <MSBuild Projects="Lesson25\L25c_Morphing.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L25c_Morphing:Make">
+        <MSBuild Projects="Lesson25\L25c_Morphing.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L26c_Clipping">
+        <MSBuild Projects="Lesson26\L26c_Clipping.cbproj"/>
+    </Target>
+    <Target Name="L26c_Clipping:Clean">
+        <MSBuild Projects="Lesson26\L26c_Clipping.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L26c_Clipping:Make">
+        <MSBuild Projects="Lesson26\L26c_Clipping.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L27c_Shadows">
+        <MSBuild Projects="Lesson27\L27c_Shadows.cbproj"/>
+    </Target>
+    <Target Name="L27c_Shadows:Clean">
+        <MSBuild Projects="Lesson27\L27c_Shadows.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L27c_Shadows:Make">
+        <MSBuild Projects="Lesson27\L27c_Shadows.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L28c_Bezier">
+        <MSBuild Projects="Lesson28\L28c_Bezier.cbproj"/>
+    </Target>
+    <Target Name="L28c_Bezier:Clean">
+        <MSBuild Projects="Lesson28\L28c_Bezier.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L28c_Bezier:Make">
+        <MSBuild Projects="Lesson28\L28c_Bezier.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L29c_Blitter">
+        <MSBuild Projects="Lesson29\L29c_Blitter.cbproj"/>
+    </Target>
+    <Target Name="L29c_Blitter:Clean">
+        <MSBuild Projects="Lesson29\L29c_Blitter.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L29c_Blitter:Make">
+        <MSBuild Projects="Lesson29\L29c_Blitter.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L30c_Collision">
+        <MSBuild Projects="Lesson30\L30c_Collision.cbproj"/>
+    </Target>
+    <Target Name="L30c_Collision:Clean">
+        <MSBuild Projects="Lesson30\L30c_Collision.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L30c_Collision:Make">
+        <MSBuild Projects="Lesson30\L30c_Collision.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L31c_Milkshape">
+        <MSBuild Projects="Lesson31\L31c_Milkshape.cbproj"/>
+    </Target>
+    <Target Name="L31c_Milkshape:Clean">
+        <MSBuild Projects="Lesson31\L31c_Milkshape.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L31c_Milkshape:Make">
+        <MSBuild Projects="Lesson31\L31c_Milkshape.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L32c_Picking">
+        <MSBuild Projects="Lesson32\L32c_Picking.cbproj"/>
+    </Target>
+    <Target Name="L32c_Picking:Clean">
+        <MSBuild Projects="Lesson32\L32c_Picking.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L32c_Picking:Make">
+        <MSBuild Projects="Lesson32\L32c_Picking.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L33c_MultiTGA">
+        <MSBuild Projects="Lesson33\L33c_MultiTGA.cbproj"/>
+    </Target>
+    <Target Name="L33c_MultiTGA:Clean">
+        <MSBuild Projects="Lesson33\L33c_MultiTGA.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L33c_MultiTGA:Make">
+        <MSBuild Projects="Lesson33\L33c_MultiTGA.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L34c_HeightMap">
+        <MSBuild Projects="Lesson34\L34c_HeightMap.cbproj"/>
+    </Target>
+    <Target Name="L34c_HeightMap:Clean">
+        <MSBuild Projects="Lesson34\L34c_HeightMap.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L34c_HeightMap:Make">
+        <MSBuild Projects="Lesson34\L34c_HeightMap.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L35c_PlayingAVI">
+        <MSBuild Projects="Lesson35\L35c_PlayingAVI.cbproj"/>
+    </Target>
+    <Target Name="L35c_PlayingAVI:Clean">
+        <MSBuild Projects="Lesson35\L35c_PlayingAVI.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L35c_PlayingAVI:Make">
+        <MSBuild Projects="Lesson35\L35c_PlayingAVI.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L36c_RadialBlur">
+        <MSBuild Projects="Lesson36\L36c_RadialBlur.cbproj"/>
+    </Target>
+    <Target Name="L36c_RadialBlur:Clean">
+        <MSBuild Projects="Lesson36\L36c_RadialBlur.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L36c_RadialBlur:Make">
+        <MSBuild Projects="Lesson36\L36c_RadialBlur.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L37c_CelShading">
+        <MSBuild Projects="Lesson37\L37c_CelShading.cbproj"/>
+    </Target>
+    <Target Name="L37c_CelShading:Clean">
+        <MSBuild Projects="Lesson37\L37c_CelShading.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L37c_CelShading:Make">
+        <MSBuild Projects="Lesson37\L37c_CelShading.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L38c_LoadingTexRC">
+        <MSBuild Projects="Lesson38\L38c_LoadingTexRC.cbproj"/>
+    </Target>
+    <Target Name="L38c_LoadingTexRC:Clean">
+        <MSBuild Projects="Lesson38\L38c_LoadingTexRC.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L38c_LoadingTexRC:Make">
+        <MSBuild Projects="Lesson38\L38c_LoadingTexRC.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L39c_PhysicSim">
+        <MSBuild Projects="Lesson39\L39c_PhysicSim.cbproj"/>
+    </Target>
+    <Target Name="L39c_PhysicSim:Clean">
+        <MSBuild Projects="Lesson39\L39c_PhysicSim.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L39c_PhysicSim:Make">
+        <MSBuild Projects="Lesson39\L39c_PhysicSim.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L40c_RopePhysics">
+        <MSBuild Projects="Lesson40\L40c_RopePhysics.cbproj"/>
+    </Target>
+    <Target Name="L40c_RopePhysics:Clean">
+        <MSBuild Projects="Lesson40\L40c_RopePhysics.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L40c_RopePhysics:Make">
+        <MSBuild Projects="Lesson40\L40c_RopePhysics.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L41c_VolumeFog">
+        <MSBuild Projects="Lesson41\L41c_VolumeFog.cbproj"/>
+    </Target>
+    <Target Name="L41c_VolumeFog:Clean">
+        <MSBuild Projects="Lesson41\L41c_VolumeFog.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L41c_VolumeFog:Make">
+        <MSBuild Projects="Lesson41\L41c_VolumeFog.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L42c_MazeViewports">
+        <MSBuild Projects="Lesson42\L42c_MazeViewports.cbproj"/>
+    </Target>
+    <Target Name="L42c_MazeViewports:Clean">
+        <MSBuild Projects="Lesson42\L42c_MazeViewports.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L42c_MazeViewports:Make">
+        <MSBuild Projects="Lesson42\L42c_MazeViewports.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L43c_FreeFonts">
+        <MSBuild Projects="Lesson43\L43c_FreeFonts.cbproj"/>
+    </Target>
+    <Target Name="L43c_FreeFonts:Clean">
+        <MSBuild Projects="Lesson43\L43c_FreeFonts.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L43c_FreeFonts:Make">
+        <MSBuild Projects="Lesson43\L43c_FreeFonts.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L44c_LenseFlare">
+        <MSBuild Projects="Lesson44\L44c_LenseFlare.cbproj"/>
+    </Target>
+    <Target Name="L44c_LenseFlare:Clean">
+        <MSBuild Projects="Lesson44\L44c_LenseFlare.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L44c_LenseFlare:Make">
+        <MSBuild Projects="Lesson44\L44c_LenseFlare.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L45c_VertexBuffer">
+        <MSBuild Projects="Lesson45\L45c_VertexBuffer.cbproj"/>
+    </Target>
+    <Target Name="L45c_VertexBuffer:Clean">
+        <MSBuild Projects="Lesson45\L45c_VertexBuffer.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L45c_VertexBuffer:Make">
+        <MSBuild Projects="Lesson45\L45c_VertexBuffer.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L46c_MultiSample">
+        <MSBuild Projects="Lesson46\L46c_MultiSample.cbproj"/>
+    </Target>
+    <Target Name="L46c_MultiSample:Clean">
+        <MSBuild Projects="Lesson46\L46c_MultiSample.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L46c_MultiSample:Make">
+        <MSBuild Projects="Lesson46\L46c_MultiSample.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L47c_VertexShaderCG">
+        <MSBuild Projects="Lesson47\L47c_VertexShaderCG.cbproj"/>
+    </Target>
+    <Target Name="L47c_VertexShaderCG:Clean">
+        <MSBuild Projects="Lesson47\L47c_VertexShaderCG.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L47c_VertexShaderCG:Make">
+        <MSBuild Projects="Lesson47\L47c_VertexShaderCG.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="L48c_ArcBallRotation">
+        <MSBuild Projects="Lesson48\L48c_ArcBallRotation.cbproj"/>
+    </Target>
+    <Target Name="L48c_ArcBallRotation:Clean">
+        <MSBuild Projects="Lesson48\L48c_ArcBallRotation.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="L48c_ArcBallRotation:Make">
+        <MSBuild Projects="Lesson48\L48c_ArcBallRotation.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="L1c_OpenGLWindow;L2c_FirstPolygon;L3c_ColorTriangle;L4c_Rotation;L5c_SolidObjects;L6c_TextureMapping;L7c_TextureFilters;L8c_Blending;L9c_MoveBitmaps;L10c_3DWorld;L11c_FlagEffect;L12c_DisplayLists;L13c_BitmapFonts;L14c_OutlineFonts;L15c_TexturedFonts;L16c_CoolFog;L17c_Tex2DFont;L18c_Quadrics;L19c_ParticleEngine;L20c_Masking;L21c_LineGame;L22c_BumpMapping;L23c_SphereMapping;L24c_ScissorTGA;L25c_Morphing;L26c_Clipping;L27c_Shadows;L28c_Bezier;L29c_Blitter;L30c_Collision;L31c_Milkshape;L32c_Picking;L33c_MultiTGA;L34c_HeightMap;L35c_PlayingAVI;L36c_RadialBlur;L37c_CelShading;L38c_LoadingTexRC;L39c_PhysicSim;L40c_RopePhysics;L41c_VolumeFog;L42c_MazeViewports;L43c_FreeFonts;L44c_LenseFlare;L45c_VertexBuffer;L46c_MultiSample;L47c_VertexShaderCG;L48c_ArcBallRotation"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="L1c_OpenGLWindow:Clean;L2c_FirstPolygon:Clean;L3c_ColorTriangle:Clean;L4c_Rotation:Clean;L5c_SolidObjects:Clean;L6c_TextureMapping:Clean;L7c_TextureFilters:Clean;L8c_Blending:Clean;L9c_MoveBitmaps:Clean;L10c_3DWorld:Clean;L11c_FlagEffect:Clean;L12c_DisplayLists:Clean;L13c_BitmapFonts:Clean;L14c_OutlineFonts:Clean;L15c_TexturedFonts:Clean;L16c_CoolFog:Clean;L17c_Tex2DFont:Clean;L18c_Quadrics:Clean;L19c_ParticleEngine:Clean;L20c_Masking:Clean;L21c_LineGame:Clean;L22c_BumpMapping:Clean;L23c_SphereMapping:Clean;L24c_ScissorTGA:Clean;L25c_Morphing:Clean;L26c_Clipping:Clean;L27c_Shadows:Clean;L28c_Bezier:Clean;L29c_Blitter:Clean;L30c_Collision:Clean;L31c_Milkshape:Clean;L32c_Picking:Clean;L33c_MultiTGA:Clean;L34c_HeightMap:Clean;L35c_PlayingAVI:Clean;L36c_RadialBlur:Clean;L37c_CelShading:Clean;L38c_LoadingTexRC:Clean;L39c_PhysicSim:Clean;L40c_RopePhysics:Clean;L41c_VolumeFog:Clean;L42c_MazeViewports:Clean;L43c_FreeFonts:Clean;L44c_LenseFlare:Clean;L45c_VertexBuffer:Clean;L46c_MultiSample:Clean;L47c_VertexShaderCG:Clean;L48c_ArcBallRotation:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="L1c_OpenGLWindow:Make;L2c_FirstPolygon:Make;L3c_ColorTriangle:Make;L4c_Rotation:Make;L5c_SolidObjects:Make;L6c_TextureMapping:Make;L7c_TextureFilters:Make;L8c_Blending:Make;L9c_MoveBitmaps:Make;L10c_3DWorld:Make;L11c_FlagEffect:Make;L12c_DisplayLists:Make;L13c_BitmapFonts:Make;L14c_OutlineFonts:Make;L15c_TexturedFonts:Make;L16c_CoolFog:Make;L17c_Tex2DFont:Make;L18c_Quadrics:Make;L19c_ParticleEngine:Make;L20c_Masking:Make;L21c_LineGame:Make;L22c_BumpMapping:Make;L23c_SphereMapping:Make;L24c_ScissorTGA:Make;L25c_Morphing:Make;L26c_Clipping:Make;L27c_Shadows:Make;L28c_Bezier:Make;L29c_Blitter:Make;L30c_Collision:Make;L31c_Milkshape:Make;L32c_Picking:Make;L33c_MultiTGA:Make;L34c_HeightMap:Make;L35c_PlayingAVI:Make;L36c_RadialBlur:Make;L37c_CelShading:Make;L38c_LoadingTexRC:Make;L39c_PhysicSim:Make;L40c_RopePhysics:Make;L41c_VolumeFog:Make;L42c_MazeViewports:Make;L43c_FreeFonts:Make;L44c_LenseFlare:Make;L45c_VertexBuffer:Make;L46c_MultiSample:Make;L47c_VertexShaderCG:Make;L48c_ArcBallRotation:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
