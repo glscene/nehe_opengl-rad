@@ -19,7 +19,7 @@ HINSTANCE hInstance = NULL; // Holds the instance of the application
 
 bool keys[256]; // Array used for the keyboard routine
 bool active = true; // Window active flag set to TRUE by default
-bool fullscreen = true; // Fullscreen flag set to fullscreen mode by default
+bool fullscreen = false; // Fullscreen flag set to fullscreen mode by default
 
 GLfloat xrot; // X rotation
 GLfloat yrot; // Y rotation
@@ -486,8 +486,8 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	bool done = false; // Bool variable to exit loop
 
 	// Ask the user which screen mode they prefer
-	if (MessageBox(NULL, "Would you like to run in fullscreen mode?",
-		"Start FullScreen?", MB_YESNO | MB_ICONQUESTION) == IDNO) {
+	///if (MessageBox(NULL, "Would you like to run in fullscreen mode?","Start FullScreen?", MB_YESNO | MB_ICONQUESTION) == IDNO)
+	{
 		fullscreen = false; // Windowed mode
 	}
 

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-#pragma comment (lib, "SOIL.a")       // for win 32 - SOIL.a, for win64 - SOIL.lib
+#pragma comment (lib, "SOIL.lib")       // for win 32 - SOIL.a, for win64 - SOIL.lib
 #include <tchar.h>
 #include <vcl.h>
 #include <windows.h>    // Header file for windows
@@ -18,7 +18,7 @@ HINSTANCE hInstance = NULL;     // Holds the instance of the application
 
 bool keys[256];                 // Array used for the keyboard routine
 bool active = true;             // Window active flag set to TRUE by default
-bool fullscreen = true;         // Fullscreen flag set to fullscreen mode by default
+bool fullscreen = false;         // Fullscreen flag set to fullscreen mode by default
 
 GLfloat xrot;	                // X rotation ( NEW )
 GLfloat yrot;		        // Y rotation ( NEW )
@@ -50,7 +50,7 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
 GLvoid ReSizeGLScene(GLsizei width, GLsizei height)     // Resize and initialize the GL window
 {
         if (height == 0)                        // Prevent A Divide By Zero By
-        {
+		{
                 height = 1;                     // Making height equal One
         }
 
@@ -418,7 +418,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	bool done = false;      // Bool variable to exit loop
 
 	// Ask the user which screen mode they prefer
-	if (MessageBox(NULL,"Would you like to run in fullscreen mode?", "Start FullScreen?",MB_YESNO|MB_ICONQUESTION)==IDNO)
+	///if (MessageBox(NULL,"Would you like to run in fullscreen mode?", "Start FullScreen?",MB_YESNO|MB_ICONQUESTION)==IDNO)
 	{
 		fullscreen = false;       // Windowed mode
 	}

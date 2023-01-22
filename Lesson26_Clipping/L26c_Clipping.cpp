@@ -1,16 +1,15 @@
 //---------------------------------------------------------------------------
-#pragma comment (lib, "SOIL.lib")       // x32 - SOIL.lib, x64 - SOIL.a
-#include <tchar.h>
 
 #include <vcl.h>
 #include <windows.h>    // Header file for windows
-#include <stdio.h>      // Header file for standard Input/Output ( ADD )
+#include <stdio.h>	// Header file for standard Input / Output
 #include <gl\gl.h>      // Header file for the OpenGL32 library
 #include <gl\glu.h>     // Header file for the GLu32 library
-#include "SOIL.h"
+#include <gl\glaux.h>   // Header file for the GLaux library
+#pragma comment (lib, "glaux.lib")
 #pragma hdrstop
-//---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
 #pragma argsused
 
 HGLRC hRC = NULL;               // Permanent rendering context
@@ -22,55 +21,82 @@ bool keys[256];                 // Array used for the keyboard routine
 bool active = true;             // Window active flag set to TRUE by default
 bool fullscreen = false;         // Fullscreen flag set to fullscreen mode by default
 
-bool twinkle;		        // Twinkling stars
-bool tp;			// 'T' Key pressed?
+// Light Parameters
+static GLfloat LightAmb[] = {0.7f, 0.7f, 0.7f, 1.0f};           // Ambient light
+static GLfloat LightDif[] = {1.0f, 1.0f, 1.0f, 1.0f};		// Diffuse light
+static GLfloat LightPos[] = {4.0f, 4.0f, 6.0f, 1.0f};		// Light position
 
-const int num = 50;			// Number of stars to draw
+GLUquadricObj *q;		// Quadratic for drawing a sphere
 
-typedef struct			// Create a structure for star
-{
-	int r, g, b;		// Stars color
-	GLfloat dist;		// Stars distance from center
-	GLfloat angle;		// Stars current angle
-}
-stars;				// Structures name is stars
-stars star[num];		// Make 'star' array of 'num' using info from the structure 'stars'
+GLfloat xrot = 0.0f;            // X rotation
+GLfloat yrot = 0.0f;            // Y rotation
+GLfloat xrotspeed = 0.0f;	// X rotation Speed
+GLfloat yrotspeed = 0.0f;	// Y rotation Speed
+GLfloat zoom = -7.0f;           // Depth into the screen
+GLfloat height = 2.0f;          // Height of ball from floor
 
-GLfloat	zoom=-15.0f;		// Viewing distance away from stars
-GLfloat tilt=90.0f;		// Tilt the view
-GLfloat	spin;			// Spin twinkling stars
-
-GLuint loop;			// General loop variable
-GLuint texture[1];		// Storage for one texture
+GLuint texture[3];		// 3 textures
 
 LRESULT	CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);   // Declaration for WndProc
 
-int LoadGLTextures()                                    // Load Bitmaps And Convert To Textures
+AUX_RGBImageRec *LoadBMP(char *Filename)        // Loads a bitmap image
 {
-	/* load an image file directly as a new OpenGL texture */
-	texture[0] = SOIL_load_OGL_texture
-		(
-		"../../Data/Star.bmp",
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_INVERT_Y
-		);
+	FILE *File = NULL;                      // File handle
 
-	if(texture[0] == 0)
-		return false;
+	if (!Filename)		                // Make sure a filename was given
+	{
+		return NULL;	                // If not return NULL
+	}
 
-    // Typical Texture Generation Using Data From The Bitmap
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	File = fopen(Filename,"r");	        // Check to see if the file exists
 
-    return true;                                        // Return Success
+	if (File)			        // Does the file exist?
+	{
+		fclose(File);		        // Close the handle
+		return auxDIBImageLoad(Filename);       // Load the bitmap and return a pointer
+	}
+
+	return NULL;                            // If load failed return NULL
 }
+
+int LoadGLTextures()    // Load bitmaps and convert to textures
+{
+	int Status = false;					// Status indicator
+        AUX_RGBImageRec *TextureImage[3];			// Create storage space for the textures
+        memset(TextureImage,0,sizeof(void *)*3);		// Set the pointer to NULL
+		if ((TextureImage[0]=LoadBMP("../../Data/EnvWall.bmp")) &&	// Load the floor texture
+		(TextureImage[1]=LoadBMP("../../Data/Ball.bmp")) &&		// Load the light texture
+        (TextureImage[2]=LoadBMP("../../Data/EnvRoll.bmp")))		// Load the wall texture
+	{
+		Status=TRUE;					// Set the status to TRUE
+		glGenTextures(3, &texture[0]);			// Create the texture
+		for (int loop=0; loop<3; loop++)		// Loop through 5 textures
+		{
+			glBindTexture(GL_TEXTURE_2D, texture[loop]);
+			glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[loop]->sizeX, TextureImage[loop]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[loop]->data);
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		}
+		for (int loop=0; loop<3; loop++)				// Loop through 5 textures
+		{
+			if (TextureImage[loop])				// If texture exists
+			{
+				if (TextureImage[loop]->data)		// If texture image exists
+				{
+					free(TextureImage[loop]->data);	// Free the texture image memory
+				}
+				free(TextureImage[loop]);		// Free the image structure
+			}
+		}
+	}
+	return Status;							// Return the status
+}
+
 GLvoid ReSizeGLScene(GLsizei width, GLsizei height)     // Resize and initialize the GL window
 {
-        if (height == 0)                        // Prevent a divide by zero by
+        if (height == 0)                        // Prevent A Divide By Zero By
         {
-                height = 1;                     // Making height equal one
+                height = 1;                     // Making height equal One
         }
 
         glViewport(0, 0, width, height);        // Reset the current viewport
@@ -85,86 +111,148 @@ GLvoid ReSizeGLScene(GLsizei width, GLsizei height)     // Resize and initialize
 	glLoadIdentity();                       // Reset the modelview matrix
 }
 
-int InitGL(void)      // All setup for OpenGL goes here
+int InitGL()      // All setup for OpenGL goes here
 {
-        if (!LoadGLTextures())                  // Jump to texture loading routine
+        if (!LoadGLTextures())							// If Loading The Textures Failed
 	{
-		return false;                   // If texture didn't load return FALSE
+		return false;			// Return false
 	}
-
-	glEnable(GL_TEXTURE_2D);                // Enable texture mapping
 
 	glShadeModel(GL_SMOOTH);                // Enable smooth shading
-	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);   // Black background
+	glClearColor(0.2f, 0.5f, 1.0f, 1.0f);	// Background
 	glClearDepth(1.0f);                     // Depth buffer setup
+        glClearStencil(0);			// Clear the stencil buffer to 0
+	glEnable(GL_DEPTH_TEST);                // Enables depth testing
 	glDepthFunc(GL_LEQUAL);                 // The type of depth testing to do
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);      // Really nice perspective calculations
+        glEnable(GL_TEXTURE_2D);		// Enable 2D texture mapping
 
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE);	// Set the blending function for translucency
-	glEnable(GL_BLEND);			// Enable blending
+        glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmb);	// Set the ambient lighting for light0
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);	// Set the diffuse lighting for light0
+	glLightfv(GL_LIGHT0, GL_POSITION, LightPos);	// Set the position for light0
 
-        for (loop = 0; loop < num; loop++)      // Create a loop that goes through all the stars
-	{
-		star[loop].angle = 0.0f;        // Start all the stars at angle zero
-                star[loop].dist = (float(loop)/num)*5.0f;       // Calculate distance from the center
-		star[loop].r = rand()%256;	// Give star[loop] A random red intensity
-		star[loop].g = rand()%256;	// Give star[loop] A random green intensity
-		star[loop].b = rand()%256;	// Give star[loop] A random blue intensity
-	}
+	glEnable(GL_LIGHT0);			// Enable light 0
+	glEnable(GL_LIGHTING);			// Enable lighting
+
+        q = gluNewQuadric();			// Create a new quadratic
+	gluQuadricNormals(q, GL_SMOOTH);	// Generate smooth normals for the quad
+	gluQuadricTexture(q, GL_TRUE);		// Enable texture coords for the quad
+
+	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set up sphere mapping
+	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set up sphere mapping
 
 	return true;                            // Initialization went OK
 }
 
-int DrawGLScene(void)         // Here's where we do all the drawing
+void DrawObject()		// Draw our ball
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear the screen and the depth buffer
-	glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select our texture
+	glColor3f(1.0f, 1.0f, 1.0f);			// Set color to white
+	glBindTexture(GL_TEXTURE_2D, texture[1]);	// Select texture 2 (1)
+	gluSphere(q, 0.35f, 32, 16);			// Draw first sphere
 
-	for (loop = 0; loop < num; loop++)                      // Loop through all the stars
-	{
-		glLoadIdentity();                               // Reset the view before we draw each star
-		glTranslatef(0.0f,0.0f,zoom);                   // Zoom into the screen (Using the value in 'zoom')
-		glRotatef(tilt,1.0f,0.0f,0.0f);	                // Tilt the view (Using the value in 'tilt')
-		glRotatef(star[loop].angle,0.0f,1.0f,0.0f);     // Rotate to the current stars angle
-		glTranslatef(star[loop].dist,0.0f,0.0f);        // Move forward on the X plane
-		glRotatef(-star[loop].angle,0.0f,1.0f,0.0f);	// Cancel the current stars angle
-		glRotatef(-tilt,1.0f,0.0f,0.0f);		// Cancel the screen tilt
+        glBindTexture(GL_TEXTURE_2D, texture[2]);	// Select texture 3 (2)
+	glColor4f(1.0f, 1.0f, 1.0f, 0.4f);		// Set color to white with 40% alpha
+	glEnable(GL_BLEND);				// Enable blending
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);		// Set blending mode to mix based on SRC alpha
+	glEnable(GL_TEXTURE_GEN_S);			// Enable sphere mapping
+	glEnable(GL_TEXTURE_GEN_T);			// Enable sphere mapping
 
-		if (twinkle)
-		{
-			glColor4ub(star[(num-loop)-1].r,star[(num-loop)-1].g,star[(num-loop)-1].b,255);
-			glBegin(GL_QUADS);
-				glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,-1.0f, 0.0f);
-				glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,-1.0f, 0.0f);
-				glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, 0.0f);
-				glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 0.0f);
-			glEnd();
-		}
-
-		glRotatef(spin,0.0f,0.0f,1.0f);
-		glColor4ub(star[loop].r,star[loop].g,star[loop].b,255);
-		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,-1.0f, 0.0f);
-			glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,-1.0f, 0.0f);
-			glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, 0.0f);
-			glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 0.0f);
-		glEnd();
-
-		spin += 0.01f;
-		star[loop].angle += float(loop)/num;
-		star[loop].dist -= 0.01f;
-		if (star[loop].dist < 0.0f)
-		{
-			star[loop].dist+=5.0f;
-			star[loop].r = rand()%256;
-			star[loop].g = rand()%256;
-			star[loop].b = rand()%256;
-		}
-	}
-	return true;    // Everything went OK
+	gluSphere(q, 0.35f, 32, 16);			// Draw another sphere using new texture
+							// Textures will mix creating a multiTexture effect (Reflection)
+	glDisable(GL_TEXTURE_GEN_S);			// Disable sphere mapping
+	glDisable(GL_TEXTURE_GEN_T);			// Disable sphere mapping
+	glDisable(GL_BLEND);				// Disable blending
 }
 
-GLvoid KillGLWindow(void)     // Properly kill the window
+void DrawFloor()		// Draws the floor
+{
+	glBindTexture(GL_TEXTURE_2D, texture[0]);	// Select texture 1 (0)
+	glBegin(GL_QUADS);				// Begin drawing a quad
+		glNormal3f(0.0, 1.0, 0.0);		// Normal pointing up
+		glTexCoord2f(0.0f, 1.0f);		// Bottom left of texture
+		glVertex3f(-2.0, 0.0, 2.0);		// Bottom left corner of floor
+
+		glTexCoord2f(0.0f, 0.0f);		// Top left of texture
+		glVertex3f(-2.0, 0.0,-2.0);		// Top left corner of floor
+
+		glTexCoord2f(1.0f, 0.0f);		// Top right of texture
+		glVertex3f( 2.0, 0.0,-2.0);		// Top right corner of floor
+
+		glTexCoord2f(1.0f, 1.0f);		// Bottom right of texture
+		glVertex3f( 2.0, 0.0, 2.0);		// Bottom right corner of floor
+	glEnd();					// Done drawing the quad
+}
+
+int DrawGLScene()         // Here's where we do all the drawing
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// clear screen and depth buffer
+
+        // Clip plane equations
+	double eqr[] = {0.0f,-1.0f, 0.0f, 0.0f};	// Plane equation to use for the reflected objects
+
+	glLoadIdentity();                               // Reset the current modelview matrix
+        glTranslatef(0.0f, -0.6f, zoom);		// Zoom and raise camera above the floor (Up 0.6 units)
+        glColorMask(0,0,0,0);				// Set color mask
+        glEnable(GL_STENCIL_TEST);			// Enable stencil buffer for "marking" the floor
+	glStencilFunc(GL_ALWAYS, 1, 1);			// Always passes, 1 bit plane, 1 as mask
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);	// We set the stencil buffer to 1 where we draw any polygon
+							// Keep if test fails, keep if test passes but buffer test fails
+							// Replace if test passes
+	glDisable(GL_DEPTH_TEST);			// Disable depth testing
+	DrawFloor();					// Draw the floor (Draws to the stencil buffer)
+							// We only want to mark it in the stencil buffer
+	glEnable(GL_DEPTH_TEST);			// Enable depth testing
+	glColorMask(1,1,1,1);				// Set color mask to TRUE, TRUE, TRUE, TRUE
+	glStencilFunc(GL_EQUAL, 1, 1);			// We draw only where the stencil is 1
+							// (I.E. where the floor was drawn)
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);		// Don't change the stencil buffer
+	glEnable(GL_CLIP_PLANE0);			// Enable clip plane for removing artifacts
+							// (When the object crosses the floor)
+	glClipPlane(GL_CLIP_PLANE0, eqr);		// Equation for reflected objects
+	glPushMatrix();					// Push the matrix onto the stack
+		glScalef(1.0f, -1.0f, 1.0f);		// Mirror Y axis
+		glLightfv(GL_LIGHT0, GL_POSITION, LightPos);	// Set Up Light0
+		glTranslatef(0.0f, height, 0.0f);	// Position the object
+		glRotatef(xrot, 1.0f, 0.0f, 0.0f);	// Rotate local coordinate system on X axis
+		glRotatef(yrot, 0.0f, 1.0f, 0.0f);	// Rotate local coordinate system on Y axis
+		DrawObject();				// Draw the sphere (Reflection)
+	glPopMatrix();					// Pop the matrix off the stack
+	glDisable(GL_CLIP_PLANE0);			// Disable clip plane for drawing the floor
+	glDisable(GL_STENCIL_TEST);			// We don't need the stencil buffer any more (Disable)
+	glLightfv(GL_LIGHT0, GL_POSITION, LightPos);	// Set up Light0 position
+	glEnable(GL_BLEND);				// Enable blending (Otherwise the reflected object wont show)
+	glDisable(GL_LIGHTING);				// Since we use blending, we disable lighting
+	glColor4f(1.0f, 1.0f, 1.0f, 0.8f);		// Set color to white with 80% alpha
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	// Blending based on source alpha and 1 minus dest alpha
+	DrawFloor();					// Draw the floor to the screen
+	glEnable(GL_LIGHTING);				// Enable lighting
+	glDisable(GL_BLEND);				// Disable blending
+	glTranslatef(0.0f, height, 0.0f);		// Position the ball at proper height
+	glRotatef(xrot, 1.0f, 0.0f, 0.0f);		// Rotate on the X axis
+	glRotatef(yrot, 0.0f, 1.0f, 0.0f);		// Rotate on the Y axis
+	DrawObject();					// Draw the ball
+	xrot += xrotspeed;				// Update X rotation angle by xrotspeed
+	yrot += yrotspeed;				// Update Y rotation angle by yrotspeed
+	glFlush();					// Flush the GL pipeline
+
+	return true;            // Everything went OK
+}
+
+void ProcessKeyboard()		// Process keyboard results
+{
+	if (keys[VK_RIGHT])	yrotspeed += 0.08f;	// Right arrow pressed (Increase yrotspeed)
+	if (keys[VK_LEFT])	yrotspeed -= 0.08f;	// Left arrow pressed (Decrease yrotspeed)
+	if (keys[VK_DOWN])	xrotspeed += 0.08f;	// Down arrow pressed (Increase xrotspeed)
+	if (keys[VK_UP])	xrotspeed -= 0.08f;	// Up arrow pressed (Decrease xrotspeed)
+
+	if (keys['A'])		zoom +=0.05f;		// 'A' Key pressed ... zoom in
+	if (keys['Z'])		zoom -=0.05f;		// 'Z' Key pressed ... zoom out
+
+	if (keys[VK_PRIOR])	height +=0.03f;		// Page up key pressed move ball up
+	if (keys[VK_NEXT])	height -=0.03f;		// Page down key pressed move ball down
+}
+
+GLvoid KillGLWindow()     // Properly kill the window
 {
 	if (fullscreen)         // Are we in fullscreen mode?
 	{
@@ -321,7 +409,7 @@ BOOL CreateGLWindow(char* title, int width, int height, byte bits, bool fullscre
 		0,					// No accumulation buffer
 		0, 0, 0, 0,				// Accumulation bits ignored
 		16,					// 16Bit Z-Buffer (Depth buffer)
-		0,					// No stencil buffer
+		1,					// Use stencil buffer ( * Important * )
 		0,					// No auxiliary buffer
 		PFD_MAIN_PLANE,				// Main drawing layer
 		0,					// Reserved
@@ -439,9 +527,9 @@ LRESULT CALLBACK WndProc(HWND hWnd,     // Handle for this window
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
-
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
-{        MSG msg;                // Windows message structure
+{
+        MSG msg;                // Windows message structure
 	bool done = false;      // Bool variable to exit loop
 
 	// Ask the user which screen mode they prefer
@@ -451,7 +539,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	}
 
 	// Create our OpenGL window
-	if (!CreateGLWindow("NeHe's Animated Blended Textures Tutorial",640,480,16,fullscreen))
+	if (!CreateGLWindow("Banu Octavian & NeHe's Stencil & Reflection Tutorial",640,480,32,fullscreen))
 	{
 		return 0;               // Quit if window was not created
 	}
@@ -472,54 +560,19 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		}
 		else            // If there are no messages
 		{
-			// Draw the scene.  watch for ESC key and quit messages from DrawGLScene()
-			if ((active && !DrawGLScene()) || keys[VK_ESCAPE])	// Active?  Was there a quit received?
+			// Draw the scene.  Watch for ESC key and quit messages from DrawGLScene()
+			if (active)                             // Program active?
 			{
-				done = true;            // ESC or DrawGLScene signalled a quit
-			}
-			else			        // Not time to quit, update screen
-			{
-				SwapBuffers(hDC);       // Swap buffers (double buffering)
-				if (keys['T'] && !tp)
+				if (keys[VK_ESCAPE])            // Was ESC pressed?
 				{
-					tp=TRUE;
-					twinkle=!twinkle;
+					done = true;            // ESC signalled a quit
 				}
-				if (!keys['T'])
+				else                            // Not time to quit, Update screen
 				{
-					tp=FALSE;
-				}
+					DrawGLScene();          // Draw the scene
+					SwapBuffers(hDC);       // Swap buffers (Double buffering)
 
-				if (keys[VK_UP])
-				{
-					tilt-=0.5f;
-				}
-
-				if (keys[VK_DOWN])
-				{
-					tilt+=0.5f;
-				}
-
-				if (keys[VK_PRIOR])
-				{
-					zoom-=0.2f;
-				}
-
-				if (keys[VK_NEXT])
-				{
-					zoom+=0.2f;
-				}
-
-				if (keys[VK_F1])        // Is F1 being pressed?
-				{
-					keys[VK_F1] = false;            // If so make key FALSE
-					KillGLWindow();                 // Kill our current window
-					fullscreen = !fullscreen;       // Toggle fullscreen / windowed mode
-					// Recreate Our OpenGL Window
-					if (!CreateGLWindow("NeHe's Animated Blended Textures Tutorial",640,480,16,fullscreen))
-					{
-						return 0;       // Quit if window was not created
-					}
+                                        ProcessKeyboard();	// Processed keyboard presses
 				}
 			}
 		}
@@ -528,6 +581,6 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	// Shutdown
 	KillGLWindow();         // Kill the window
 	return (msg.wParam);    // Exit the program
-
 }
 //---------------------------------------------------------------------------
+

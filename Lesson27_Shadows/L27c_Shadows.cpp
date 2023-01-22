@@ -1,17 +1,18 @@
 //---------------------------------------------------------------------------
-#pragma comment (lib, "SOIL.lib")       // x32 - SOIL.lib, x64 - SOIL.a
-#include <tchar.h>
 
 #include <vcl.h>
 #include <windows.h>    // Header file for windows
-#include <stdio.h>      // Header file for standard Input/Output ( ADD )
 #include <gl\gl.h>      // Header file for the OpenGL32 library
 #include <gl\glu.h>     // Header file for the GLu32 library
-#include "SOIL.h"
+#include <gl\glaux.h>   // Header file for the GLaux library
+#include "3dobject.h"	// Header file for 3D object handling
 #pragma hdrstop
-//---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
 #pragma argsused
+
+typedef float GLvector4f[4];	// Typedef's for VMatMult procedure
+typedef float GLmatrix16f[16];	// Typedef's for VMatMult procedure
 
 HGLRC hRC = NULL;               // Permanent rendering context
 HDC hDC = NULL;                 // Private GDI device context
@@ -22,55 +23,45 @@ bool keys[256];                 // Array used for the keyboard routine
 bool active = true;             // Window active flag set to TRUE by default
 bool fullscreen = false;         // Fullscreen flag set to fullscreen mode by default
 
-bool twinkle;		        // Twinkling stars
-bool tp;			// 'T' Key pressed?
+glObject obj;			// Object
+GLfloat xrot = 0,xspeed = 0;	// X rotation & X speed
+GLfloat yrot = 0,yspeed = 0;	// Y rotation & Y speed
 
-const int num = 50;			// Number of stars to draw
+float LightPos[] = { 0.0f, 5.0f,-4.0f, 1.0f};	// Light position
+float LightAmb[] = { 0.2f, 0.2f, 0.2f, 1.0f};	// Ambient light values
+float LightDif[] = { 0.6f, 0.6f, 0.6f, 1.0f};	// Diffuse light values
+float LightSpc[] = {-0.2f, -0.2f, -0.2f, 1.0f};	// Specular light values
 
-typedef struct			// Create a structure for star
-{
-	int r, g, b;		// Stars color
-	GLfloat dist;		// Stars distance from center
-	GLfloat angle;		// Stars current angle
-}
-stars;				// Structures name is stars
-stars star[num];		// Make 'star' array of 'num' using info from the structure 'stars'
+float MatAmb[] = {0.4f, 0.4f, 0.4f, 1.0f};	// Material - ambient values
+float MatDif[] = {0.2f, 0.6f, 0.9f, 1.0f};	// Material - diffuse values
+float MatSpc[] = {0.0f, 0.0f, 0.0f, 1.0f};	// Material - specular values
+float MatShn[] = {0.0f};			// Material - shininess
 
-GLfloat	zoom=-15.0f;		// Viewing distance away from stars
-GLfloat tilt=90.0f;		// Tilt the view
-GLfloat	spin;			// Spin twinkling stars
+float ObjPos[] = {-2.0f,-2.0f,-5.0f};		// Object position
 
-GLuint loop;			// General loop variable
-GLuint texture[1];		// Storage for one texture
+GLUquadricObj *q;				// Quadratic for drawing a sphere
+float SpherePos[] = {-4.0f,-5.0f,-6.0f};
 
 LRESULT	CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);   // Declaration for WndProc
 
-int LoadGLTextures()                                    // Load Bitmaps And Convert To Textures
+void VMatMult(GLmatrix16f M, GLvector4f v)
 {
-	/* load an image file directly as a new OpenGL texture */
-	texture[0] = SOIL_load_OGL_texture
-		(
-		"../../Data/Star.bmp",
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_INVERT_Y
-		);
-
-	if(texture[0] == 0)
-		return false;
-
-    // Typical Texture Generation Using Data From The Bitmap
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    return true;                                        // Return Success
+	GLfloat res[4];					        // Hold calculated results
+	res[0]=M[ 0]*v[0]+M[ 4]*v[1]+M[ 8]*v[2]+M[12]*v[3];
+	res[1]=M[ 1]*v[0]+M[ 5]*v[1]+M[ 9]*v[2]+M[13]*v[3];
+	res[2]=M[ 2]*v[0]+M[ 6]*v[1]+M[10]*v[2]+M[14]*v[3];
+	res[3]=M[ 3]*v[0]+M[ 7]*v[1]+M[11]*v[2]+M[15]*v[3];
+	v[0]=res[0];						// Results are stored back in v[]
+	v[1]=res[1];
+	v[2]=res[2];
+	v[3]=res[3];		// Homogenous coordinate
 }
+
 GLvoid ReSizeGLScene(GLsizei width, GLsizei height)     // Resize and initialize the GL window
 {
-        if (height == 0)                        // Prevent a divide by zero by
+        if (height == 0)                        // Prevent A Divide By Zero By
         {
-                height = 1;                     // Making height equal one
+                height = 1;                     // Making height equal One
         }
 
         glViewport(0, 0, width, height);        // Reset the current viewport
@@ -85,86 +76,205 @@ GLvoid ReSizeGLScene(GLsizei width, GLsizei height)     // Resize and initialize
 	glLoadIdentity();                       // Reset the modelview matrix
 }
 
-int InitGL(void)      // All setup for OpenGL goes here
+int InitGLObjects()		// Initialize objects
 {
-        if (!LoadGLTextures())                  // Jump to texture loading routine
+	if (!ReadObject("../../Data/Object2.txt", &obj))	// Read object2 into obj
 	{
-		return false;                   // If texture didn't load return FALSE
+		return FALSE;				// If failed return false
 	}
 
-	glEnable(GL_TEXTURE_2D);                // Enable texture mapping
+	SetConnectivity(&obj);				// Set face to face connectivity
 
-	glShadeModel(GL_SMOOTH);                // Enable smooth shading
-	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);   // Black background
-	glClearDepth(1.0f);                     // Depth buffer setup
-	glDepthFunc(GL_LEQUAL);                 // The type of depth testing to do
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);      // Really nice perspective calculations
+	for (unsigned int i=0;i<obj.nPlanes;i++)	// Loop through all object planes
+		CalcPlane(obj, &(obj.planes[i]));	// Compute plane equations for all faces
 
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE);	// Set the blending function for translucency
-	glEnable(GL_BLEND);			// Enable blending
+	return true;		// Return true
+}
 
-        for (loop = 0; loop < num; loop++)      // Create a loop that goes through all the stars
-	{
-		star[loop].angle = 0.0f;        // Start all the stars at angle zero
-                star[loop].dist = (float(loop)/num)*5.0f;       // Calculate distance from the center
-		star[loop].r = rand()%256;	// Give star[loop] A random red intensity
-		star[loop].g = rand()%256;	// Give star[loop] A random green intensity
-		star[loop].b = rand()%256;	// Give star[loop] A random blue intensity
-	}
+int InitGL()      // All setup for OpenGL goes here
+{
+	if (!InitGLObjects()) return FALSE;			// Function for initializing our object(s)
+	glShadeModel(GL_SMOOTH);				// Enable smooth shading
+	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);			// Black background
+	glClearDepth(1.0f);					// Depth buffer setup
+	glClearStencil(0);					// Stencil buffer setup
+	glEnable(GL_DEPTH_TEST);				// Enables depth testing
+	glDepthFunc(GL_LEQUAL);					// The type of depth testing to do
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really nice perspective calculations
+
+	glLightfv(GL_LIGHT1, GL_POSITION, LightPos);		// Set light1 position
+	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmb);		// Set light1 ambience
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDif);		// Set light1 diffuse
+	glLightfv(GL_LIGHT1, GL_SPECULAR, LightSpc);		// Set light1 specular
+	glEnable(GL_LIGHT1);					// Enable light1
+	glEnable(GL_LIGHTING);					// Enable lighting
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, MatAmb);		// Set material ambience
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, MatDif);		// Set material diffuse
+	glMaterialfv(GL_FRONT, GL_SPECULAR, MatSpc);		// Set material specular
+	glMaterialfv(GL_FRONT, GL_SHININESS, MatShn);		// Set material shininess
+
+	glCullFace(GL_BACK);					// Set culling face to back face
+	glEnable(GL_CULL_FACE);					// Enable culling
+	glClearColor(0.1f, 1.0f, 0.5f, 1.0f);			// Set clear color (Greenish color)
+
+	q = gluNewQuadric();					// Initialize quadratic
+	gluQuadricNormals(q, GL_SMOOTH);			// Enable smooth normal generation
+	gluQuadricTexture(q, GL_FALSE);				// Disable auto texture coords
 
 	return true;                            // Initialization went OK
 }
 
-int DrawGLScene(void)         // Here's where we do all the drawing
+void DrawGLRoom()		// Draw the room (Box)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear the screen and the depth buffer
-	glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select our texture
-
-	for (loop = 0; loop < num; loop++)                      // Loop through all the stars
-	{
-		glLoadIdentity();                               // Reset the view before we draw each star
-		glTranslatef(0.0f,0.0f,zoom);                   // Zoom into the screen (Using the value in 'zoom')
-		glRotatef(tilt,1.0f,0.0f,0.0f);	                // Tilt the view (Using the value in 'tilt')
-		glRotatef(star[loop].angle,0.0f,1.0f,0.0f);     // Rotate to the current stars angle
-		glTranslatef(star[loop].dist,0.0f,0.0f);        // Move forward on the X plane
-		glRotatef(-star[loop].angle,0.0f,1.0f,0.0f);	// Cancel the current stars angle
-		glRotatef(-tilt,1.0f,0.0f,0.0f);		// Cancel the screen tilt
-
-		if (twinkle)
-		{
-			glColor4ub(star[(num-loop)-1].r,star[(num-loop)-1].g,star[(num-loop)-1].b,255);
-			glBegin(GL_QUADS);
-				glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,-1.0f, 0.0f);
-				glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,-1.0f, 0.0f);
-				glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, 0.0f);
-				glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 0.0f);
-			glEnd();
-		}
-
-		glRotatef(spin,0.0f,0.0f,1.0f);
-		glColor4ub(star[loop].r,star[loop].g,star[loop].b,255);
-		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,-1.0f, 0.0f);
-			glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,-1.0f, 0.0f);
-			glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, 0.0f);
-			glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 0.0f);
-		glEnd();
-
-		spin += 0.01f;
-		star[loop].angle += float(loop)/num;
-		star[loop].dist -= 0.01f;
-		if (star[loop].dist < 0.0f)
-		{
-			star[loop].dist+=5.0f;
-			star[loop].r = rand()%256;
-			star[loop].g = rand()%256;
-			star[loop].b = rand()%256;
-		}
-	}
-	return true;    // Everything went OK
+	glBegin(GL_QUADS);	// Begin drawing quads
+		// Floor
+		glNormal3f(0.0f, 1.0f, 0.0f);		// Normal pointing up
+		glVertex3f(-10.0f,-10.0f,-20.0f);	// Back left
+		glVertex3f(-10.0f,-10.0f, 20.0f);	// Front left
+		glVertex3f( 10.0f,-10.0f, 20.0f);	// Front right
+		glVertex3f( 10.0f,-10.0f,-20.0f);	// Back right
+		// Ceiling
+		glNormal3f(0.0f,-1.0f, 0.0f);		// Normal point down
+		glVertex3f(-10.0f, 10.0f, 20.0f);	// Front left
+		glVertex3f(-10.0f, 10.0f,-20.0f);	// Back left
+		glVertex3f( 10.0f, 10.0f,-20.0f);	// Back right
+		glVertex3f( 10.0f, 10.0f, 20.0f);	// Front right
+		// Front wall
+		glNormal3f(0.0f, 0.0f, 1.0f);		// Normal pointing away from viewer
+		glVertex3f(-10.0f, 10.0f,-20.0f);	// Top left
+		glVertex3f(-10.0f,-10.0f,-20.0f);	// Bottom left
+		glVertex3f( 10.0f,-10.0f,-20.0f);	// Bottom right
+		glVertex3f( 10.0f, 10.0f,-20.0f);	// Top right
+		// Back wall
+		glNormal3f(0.0f, 0.0f,-1.0f);		// Normal pointing towards viewer
+		glVertex3f( 10.0f, 10.0f, 20.0f);	// Top right
+		glVertex3f( 10.0f,-10.0f, 20.0f);	// Bottom right
+		glVertex3f(-10.0f,-10.0f, 20.0f);	// Bottom left
+		glVertex3f(-10.0f, 10.0f, 20.0f);	// Top left
+		// Left wall
+		glNormal3f(1.0f, 0.0f, 0.0f);		// Normal pointing right
+		glVertex3f(-10.0f, 10.0f, 20.0f);	// Top front
+		glVertex3f(-10.0f,-10.0f, 20.0f);	// Bottom front
+		glVertex3f(-10.0f,-10.0f,-20.0f);	// Bottom back
+		glVertex3f(-10.0f, 10.0f,-20.0f);	// Top back
+		// Right wall
+		glNormal3f(-1.0f, 0.0f, 0.0f);		// Normal pointing left
+		glVertex3f( 10.0f, 10.0f,-20.0f);	// Top back
+		glVertex3f( 10.0f,-10.0f,-20.0f);	// Bottom back
+		glVertex3f( 10.0f,-10.0f, 20.0f);	// Bottom front
+		glVertex3f( 10.0f, 10.0f, 20.0f);	// Top front
+	glEnd();        	// Done drawing quads
 }
 
-GLvoid KillGLWindow(void)     // Properly kill the window
+int DrawGLScene()         // Here's where we do all the drawing
+{
+	GLmatrix16f Minv;
+	GLvector4f wlp, lp;
+
+	// Clear color buffer, depth buffer, stencil buffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	glLoadIdentity();					// Reset modelview matrix
+	glTranslatef(0.0f, 0.0f, -20.0f);			// Zoom into screen 20 units
+	glLightfv(GL_LIGHT1, GL_POSITION, LightPos);		// Position light1
+	glTranslatef(SpherePos[0], SpherePos[1], SpherePos[2]);	// Position the sphere
+	gluSphere(q, 1.5f, 32, 16);				// Draw a sphere
+
+	// Calculate light's position relative to local coordinate system
+	// dunno if this is the best way to do it, but it actually works
+	// if u find another aproach, let me know ;)
+
+	// we build the inversed matrix by doing all the actions in reverse order
+	// and with reverse parameters (notice -xrot, -yrot, -ObjPos[], etc.)
+	glLoadIdentity();					// Reset matrix
+	glRotatef(-yrot, 0.0f, 1.0f, 0.0f);			// Rotate by -yrot on Y axis
+	glRotatef(-xrot, 1.0f, 0.0f, 0.0f);			// Rotate by -xrot on X axis
+	glGetFloatv(GL_MODELVIEW_MATRIX,Minv);			// Retrieve modelview matrix (Stores in Minv)
+	lp[0] = LightPos[0];					// Store light position X in lp[0]
+	lp[1] = LightPos[1];					// Store light position Y in lp[1]
+	lp[2] = LightPos[2];					// Store light position Z in lp[2]
+	lp[3] = LightPos[3];					// Store light direction in lp[3]
+	VMatMult(Minv, lp);					// We store rotated light vector in 'lp' array
+	glTranslatef(-ObjPos[0], -ObjPos[1], -ObjPos[2]);	// Move negative on all axis based on ObjPos[] values (X, Y, Z)
+	glGetFloatv(GL_MODELVIEW_MATRIX,Minv);			// Retrieve modelview matrix from Minv
+	wlp[0] = 0.0f;						// World local coord X to 0
+	wlp[1] = 0.0f;						// World local coord Y to 0
+	wlp[2] = 0.0f;						// World local coord Z to 0
+	wlp[3] = 1.0f;
+	VMatMult(Minv, wlp);					// We store the position of the world origin relative to the
+								// local coord. System in 'wlp' array
+	lp[0] += wlp[0];					// Adding these two gives us the
+	lp[1] += wlp[1];					// position of the light relative to
+	lp[2] += wlp[2];					// the local coordinate system
+
+	glColor4f(0.7f, 0.4f, 0.0f, 1.0f);			// Set color to an orange
+	glLoadIdentity();					// Reset modelview matrix
+	glTranslatef(0.0f, 0.0f, -20.0f);			// Zoom into the screen 20 units
+	DrawGLRoom();						// Draw the room
+	glTranslatef(ObjPos[0], ObjPos[1], ObjPos[2]);		// Position the object
+	glRotatef(xrot, 1.0f, 0.0f, 0.0f);			// Spin it on the X axis by xrot
+	glRotatef(yrot, 0.0f, 1.0f, 0.0f);			// Spin it on the Y axis by yrot
+	DrawGLObject(obj);					// Procedure for drawing the loaded object
+	CastShadow(&obj, lp);					// Procedure for casting the shadow based on the silhouette
+
+	glColor4f(0.7f, 0.4f, 0.0f, 1.0f);			// Set color to purplish blue
+	glDisable(GL_LIGHTING);					// Disable lighting
+	glDepthMask(GL_FALSE);					// Disable depth mask
+	glTranslatef(lp[0], lp[1], lp[2]);			// Translate to light's position
+								// Notice we're still in local coordinate system
+	gluSphere(q, 0.2f, 16, 8);				// Draw a little yellow sphere (Represents light)
+	glEnable(GL_LIGHTING);					// Enable lighting
+	glDepthMask(GL_TRUE);					// Enable depth mask
+
+	xrot += xspeed;						// Increase xrot by xspeed
+	yrot += yspeed;						// Increase yrot by yspeed
+
+	glFlush();						// Flush the OpenGL pipeline
+
+	return true;            // Everything went OK
+}
+
+void ProcessKeyboard()          // Process key presses
+{
+	// Spin object
+	if (keys[VK_LEFT])	yspeed -= 0.1f;	        // 'Arrow Left' decrease yspeed
+	if (keys[VK_RIGHT])	yspeed += 0.1f;		// 'Arrow Right' increase yspeed
+	if (keys[VK_UP])	xspeed -= 0.1f;		// 'Arrow Up' decrease xspeed
+	if (keys[VK_DOWN])	xspeed += 0.1f;		// 'Arrow Down' increase xspeed
+
+	// Adjust light's position
+	if (keys['L']) LightPos[0] += 0.05f;		// 'L' Moves light right
+	if (keys['J']) LightPos[0] -= 0.05f;		// 'J' Moves light left
+
+	if (keys['I']) LightPos[1] += 0.05f;		// 'I' Moves light up
+	if (keys['K']) LightPos[1] -= 0.05f;		// 'K' Moves light down
+
+	if (keys['O']) LightPos[2] += 0.05f;		// 'O' Moves light toward viewer
+	if (keys['U']) LightPos[2] -= 0.05f;		// 'U' Moves light away from viewer
+
+	// Adjust object's position
+	if (keys[VK_NUMPAD6]) ObjPos[0] += 0.05f;	// 'Numpad6' move object right
+	if (keys[VK_NUMPAD4]) ObjPos[0] -= 0.05f;	// 'Numpad4' move object left
+
+	if (keys[VK_NUMPAD8]) ObjPos[1] += 0.05f;	// 'Numpad8' move object up
+	if (keys[VK_NUMPAD5]) ObjPos[1] -= 0.05f;	// 'Numpad5' move object down
+
+	if (keys[VK_NUMPAD9]) ObjPos[2] += 0.05f;	// 'Numpad9' move object toward viewer
+	if (keys[VK_NUMPAD7]) ObjPos[2] -= 0.05f;	// 'Numpad7' move object away from viewer
+
+	// Adjust ball's position
+	if (keys['D']) SpherePos[0] += 0.05f;		// 'D' Move ball right
+	if (keys['A']) SpherePos[0] -= 0.05f;		// 'A' Move ball left
+
+	if (keys['W']) SpherePos[1] += 0.05f;		// 'W' Move ball up
+	if (keys['S']) SpherePos[1] -= 0.05f;		// 'S' Move ball down
+
+	if (keys['E']) SpherePos[2] += 0.05f;		// 'E' Move ball toward viewer
+	if (keys['Q']) SpherePos[2] -= 0.05f;		// 'Q' Move ball away from viewer
+}
+
+GLvoid KillGLWindow()     // Properly kill the window
 {
 	if (fullscreen)         // Are we in fullscreen mode?
 	{
@@ -321,7 +431,7 @@ BOOL CreateGLWindow(char* title, int width, int height, byte bits, bool fullscre
 		0,					// No accumulation buffer
 		0, 0, 0, 0,				// Accumulation bits ignored
 		16,					// 16Bit Z-Buffer (Depth buffer)
-		0,					// No stencil buffer
+		1,					// Use stencil buffer ( * Important * )
 		0,					// No auxiliary buffer
 		PFD_MAIN_PLANE,				// Main drawing layer
 		0,					// Reserved
@@ -439,9 +549,9 @@ LRESULT CALLBACK WndProc(HWND hWnd,     // Handle for this window
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
-
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
-{        MSG msg;                // Windows message structure
+{
+        MSG msg;                // Windows message structure
 	bool done = false;      // Bool variable to exit loop
 
 	// Ask the user which screen mode they prefer
@@ -451,7 +561,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	}
 
 	// Create our OpenGL window
-	if (!CreateGLWindow("NeHe's Animated Blended Textures Tutorial",640,480,16,fullscreen))
+	if (!CreateGLWindow("Banu Octavian & NeHe's Shadow Casting Tutorial",800,600,32,fullscreen))
 	{
 		return 0;               // Quit if window was not created
 	}
@@ -472,54 +582,18 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		}
 		else            // If there are no messages
 		{
-			// Draw the scene.  watch for ESC key and quit messages from DrawGLScene()
-			if ((active && !DrawGLScene()) || keys[VK_ESCAPE])	// Active?  Was there a quit received?
+			// Draw the scene.  Watch for ESC key and quit messages from DrawGLScene()
+			if (active)                             // Program active?
 			{
-				done = true;            // ESC or DrawGLScene signalled a quit
-			}
-			else			        // Not time to quit, update screen
-			{
-				SwapBuffers(hDC);       // Swap buffers (double buffering)
-				if (keys['T'] && !tp)
+				if (keys[VK_ESCAPE])            // Was ESC pressed?
 				{
-					tp=TRUE;
-					twinkle=!twinkle;
+					done = true;            // ESC signalled a quit
 				}
-				if (!keys['T'])
+				else                            // Not time to quit, Update screen
 				{
-					tp=FALSE;
-				}
-
-				if (keys[VK_UP])
-				{
-					tilt-=0.5f;
-				}
-
-				if (keys[VK_DOWN])
-				{
-					tilt+=0.5f;
-				}
-
-				if (keys[VK_PRIOR])
-				{
-					zoom-=0.2f;
-				}
-
-				if (keys[VK_NEXT])
-				{
-					zoom+=0.2f;
-				}
-
-				if (keys[VK_F1])        // Is F1 being pressed?
-				{
-					keys[VK_F1] = false;            // If so make key FALSE
-					KillGLWindow();                 // Kill our current window
-					fullscreen = !fullscreen;       // Toggle fullscreen / windowed mode
-					// Recreate Our OpenGL Window
-					if (!CreateGLWindow("NeHe's Animated Blended Textures Tutorial",640,480,16,fullscreen))
-					{
-						return 0;       // Quit if window was not created
-					}
+					DrawGLScene();          // Draw the scene
+					SwapBuffers(hDC);       // Swap buffers (Double buffering)
+                                        ProcessKeyboard();	// Process key presses
 				}
 			}
 		}
@@ -528,6 +602,6 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	// Shutdown
 	KillGLWindow();         // Kill the window
 	return (msg.wParam);    // Exit the program
-
 }
 //---------------------------------------------------------------------------
+

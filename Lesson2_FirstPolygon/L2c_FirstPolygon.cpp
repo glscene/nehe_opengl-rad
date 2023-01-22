@@ -383,8 +383,8 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 
 	/*
 	// Ask the user which screen mode they prefer
-	if (MessageBox(NULL, "Would you like to run in fullscreen mode?",
-		"Start FullScreen?", MB_YESNO | MB_ICONQUESTION) == IDNO) {
+	///if (MessageBox(NULL, "Would you like to run in fullscreen mode?","Start FullScreen?", MB_YESNO | MB_ICONQUESTION) == IDNO) 
+	{
 		fullscreen = false; // Windowed mode
 	}
 	*/
