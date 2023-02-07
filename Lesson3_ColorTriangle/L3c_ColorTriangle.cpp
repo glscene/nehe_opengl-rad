@@ -20,6 +20,8 @@ bool fullscreen = true; // Fullscreen flag set to fullscreen mode by default
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); // Declaration for WndProc
 
+// ---------------------------------------------------------------------
+
 GLvoid ReSizeGLScene(GLsizei width, GLsizei height)
 	// Resize and initialize the GL window
 {
@@ -40,6 +42,8 @@ GLvoid ReSizeGLScene(GLsizei width, GLsizei height)
 	glLoadIdentity(); // Reset the modelview matrix
 }
 
+// --------------------------------------------------------------------
+
 int InitGL(void) // All setup for OpenGL goes here
 {
 	glShadeModel(GL_SMOOTH); // Enable smooth shading
@@ -51,6 +55,8 @@ int InitGL(void) // All setup for OpenGL goes here
 	// Really nice perspective calculations
 	return true; // Initialization went OK
 }
+
+// ---------------------------------------------------------------------
 
 int DrawGLScene(void) // Here's where we do all the drawing
 {
@@ -68,6 +74,7 @@ int DrawGLScene(void) // Here's where we do all the drawing
 	glColor3f(0.0f, 0.0f, 1.0f); // Set the color to blue
 	glVertex3f(1.0f, -1.0f, 0.0f); // Bottom right
 	glEnd(); // Finished Drawing The Triangle
+
 	glTranslatef(3.0f, 0.0f, 0.0f); // Move right 3 units
 
 	glColor3f(0.5f, 0.5f, 1.0f); // Set the color to blue one time only
@@ -77,9 +84,10 @@ int DrawGLScene(void) // Here's where we do all the drawing
 	glVertex3f(1.0f, -1.0f, 0.0f); // Bottom right
 	glVertex3f(-1.0f, -1.0f, 0.0f); // Bottom left
 	glEnd();
-
 	return true; // Done drawing the quad
 }
+
+// ---------------------------------------------------------------------
 
 GLvoid KillGLWindow(void) // Properly kill the window
 {
@@ -128,6 +136,8 @@ GLvoid KillGLWindow(void) // Properly kill the window
 		hInstance = NULL; // Set hInstance to NULL
 	}
 }
+
+// ---------------------------------------------------------------------
 
 /* This Code Creates Our OpenGL Window.  Parameters Are:
  *	title			- Title To Appear At The Top Of The Window
@@ -319,6 +329,8 @@ bool CreateGLWindow(char* title, int width, int height, byte bits,
 	return true; // Success
 }
 
+// ---------------------------------------------------------------------
+
 LRESULT CALLBACK WndProc(HWND hWnd, // Handle for this window
 	UINT uMsg, // Message for this window
 	WPARAM wParam, // Additional message information
@@ -380,13 +392,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, // Handle for this window
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
+// ---------------------------------------------------------------------
+
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	MSG msg; // Windows message structure
 	bool done = false; // bool variable to exit loop
 
 	/*
 	 // Ask the user which screen mode they prefer
-	 ///if (MessageBox(NULL, "Would you like to run in fullscreen mode?","Start FullScreen?", MB_YESNO | MB_ICONQUESTION) == IDNO) 
+	 ///if (MessageBox(NULL, "Would you like to run in fullscreen mode?","Start FullScreen?", MB_YESNO | MB_ICONQUESTION) == IDNO)
 	 {
 	 fullscreen = false; // Windowed mode
 	 }
@@ -438,9 +452,9 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 			}
 		}
 	}
-
 	// Shutdown
 	KillGLWindow(); // Kill the window
 	return (msg.wParam); // Exit the program
 }
+
 // ---------------------------------------------------------------------------

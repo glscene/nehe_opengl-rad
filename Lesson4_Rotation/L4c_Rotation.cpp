@@ -23,6 +23,8 @@ GLfloat rquad; // Angle for the quad
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); // Declaration for WndProc
 
+// ---------------------------------------------------------------------
+
 GLvoid ReSizeGLScene(GLsizei width, GLsizei height)
 	// Resize and initialize the GL window
 {
@@ -43,6 +45,8 @@ GLvoid ReSizeGLScene(GLsizei width, GLsizei height)
 	glLoadIdentity(); // Reset the modelview matrix
 }
 
+// --------------------------------------------------------------------
+
 int InitGL(void) // All setup for OpenGL goes here
 {
 	glShadeModel(GL_SMOOTH); // Enable smooth shading
@@ -54,6 +58,8 @@ int InitGL(void) // All setup for OpenGL goes here
 	// Really nice perspective calculations
 	return true; // Initialization went OK
 }
+
+// ---------------------------------------------------------------------
 
 int DrawGLScene(void) // Here's where we do all the drawing
 {
@@ -92,6 +98,8 @@ int DrawGLScene(void) // Here's where we do all the drawing
 
 	return true; // Done drawing the quad
 }
+
+// ---------------------------------------------------------------------
 
 GLvoid KillGLWindow(void) // Properly kill the window
 {
@@ -140,6 +148,8 @@ GLvoid KillGLWindow(void) // Properly kill the window
 		hInstance = NULL; // Set hInstance to NULL
 	}
 }
+
+// ---------------------------------------------------------------------
 
 /* This Code Creates Our OpenGL Window.  Parameters Are:
  *	title			- Title To Appear At The Top Of The Window
@@ -330,6 +340,8 @@ bool CreateGLWindow(char* title, int width, int height, byte bits,
 
 	return true; // Success
 }
+
+// ---------------------------------------------------------------------
 
 LRESULT CALLBACK WndProc(HWND hWnd, // Handle for this window
 	UINT uMsg, // Message for this window

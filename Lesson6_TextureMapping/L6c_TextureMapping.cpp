@@ -1,5 +1,6 @@
 //---------------------------------------------------------------------------
-#pragma comment (lib, "SOIL.lib")       // for win 32 - SOIL.a, for win64 - SOIL.lib
+#pragma comment (lib, "SOIL.lib")       // for win 32 - SOIL.lib, for win64 - SOIL.a
+
 #include <tchar.h>
 #include <vcl.h>
 #include <windows.h>    // Header file for windows
